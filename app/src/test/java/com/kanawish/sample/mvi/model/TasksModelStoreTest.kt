@@ -16,7 +16,7 @@ import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
 import toothpick.testing.ToothPickRule
 import javax.inject.Inject
-
+import com.kanawish.sample.mvi.intent.Intent
 class TasksModelStoreTest {
 
     // Swap out AndroidSchedulers.mainThread() for trampoline scheduler.
@@ -73,7 +73,16 @@ class TasksModelStoreTest {
         testObserver.values().last().let {
             assert(it.filter == ANY)
             assert(it.syncState == PROCESS(REFRESH))
+            //            assert(it.syncState == IDLE)
         }
+
+        
+        //below is equivalent to above
+//        tasksModelStore.process(object : Intent<TasksState> {
+//            override fun reduce(oldState: TasksState): TasksState {
+//                return oldState.copy(syncState = PROCESS(REFRESH))
+//            }
+//        })
 
         // Simulate a successful refresh call, that returned 1 task.
         tasksModelStore.process(intent {
