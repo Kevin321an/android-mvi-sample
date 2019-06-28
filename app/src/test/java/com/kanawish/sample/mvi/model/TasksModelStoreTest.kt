@@ -7,6 +7,8 @@ import com.kanawish.sample.mvi.model.SyncState.PROCESS
 import com.kanawish.sample.mvi.model.SyncState.PROCESS.Type.REFRESH
 import com.kanawish.sample.mvi.util.ReplaceMainThreadSchedulerRule
 import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
@@ -14,6 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
+import timber.log.Timber
 import toothpick.testing.ToothPickRule
 import javax.inject.Inject
 
@@ -55,10 +58,31 @@ class TasksModelStoreTest {
         )
     }
 
+    fun doSometh(i:Int,s:String){
+
+    }
+    fun doSometh1(){
+
+
+    }
+
+
+    fun poserofColonUnit(c:(Int,String) -> Unit) { }
+    fun poserofColonUnit1(c:() -> Unit) { }
+
+    //https://www.myandroidsolutions.com/2017/09/21/kotlin-pass-function-parameter/#.XRY2E-hKiUk
+    //https://kotlinlang.org/docs/reference/reflection.html
+    //() -> Int/Unit  return type
+    fun poserofColonUnitCaller(){
+        poserofColonUnit({i, s -> doSometh(i, s)})
+        poserofColonUnit1(::doSometh1)
+        poserofColonUnit1({Timber.w("do something")})
+    }
+
+
     @Test
     fun changes() {
         val testObserver = TestObserver<TasksState>()
-
         // Process a mock intent
         tasksModelStore.process( intent {
             // Simulates a pull to refresh
@@ -67,7 +91,8 @@ class TasksModelStoreTest {
 
         // We subscribe after this to validate replay works correctly.
         tasksModelStore.modelState().subscribe(testObserver)
-
+    val x =1;
+    val s ="";
         // Expected stated when refresh is running after mock intent above.
         testObserver.assertValueCount(1)
         testObserver.values().last().let {
