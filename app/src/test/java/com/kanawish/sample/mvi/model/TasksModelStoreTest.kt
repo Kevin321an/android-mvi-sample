@@ -1,5 +1,6 @@
 package com.kanawish.sample.mvi.model
 
+import com.kanawish.sample.mvi.intent.Intent
 import com.kanawish.sample.mvi.intent.intent
 import com.kanawish.sample.mvi.model.FilterType.ANY
 import com.kanawish.sample.mvi.model.SyncState.IDLE
@@ -89,14 +90,21 @@ class TasksModelStoreTest {
             copy(syncState = PROCESS(REFRESH))
         } )
 
+        //below is equivalent to above
+//        tasksModelStore.process(object : Intent<TasksState> {
+//            override fun reduce(oldState: TasksState): TasksState {
+//                return oldState.copy(syncState = PROCESS(REFRESH))
+//            }
+//        })
+
         // We subscribe after this to validate replay works correctly.
         tasksModelStore.modelState().subscribe(testObserver)
-    val x =1;
-    val s ="";
+
         // Expected stated when refresh is running after mock intent above.
         testObserver.assertValueCount(1)
         testObserver.values().last().let {
             assert(it.filter == ANY)
+//            assert(it.syncState == IDLE) //notes
             assert(it.syncState == PROCESS(REFRESH))
         }
 
